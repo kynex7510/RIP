@@ -1,0 +1,26 @@
+/**
+ * @file Cache.h
+ * @brief Cache utilities.
+ */
+#ifndef _RIP_CACHE_H
+#define _RIP_CACHE_H
+
+#include <RIP/Defs.h>
+
+/**
+ * @brief Flush (clean + invalidate) data cache.
+ * @param[in] addr Address of the data to flush.
+ * @param[in] size Size of the data to flush.
+ * @note This is a no-op when no backend is provided.
+ */
+RIP_EXTERN void ripFlushCache(void* data, size_t size);
+
+/**
+ * @brief Invalidate data cache.
+ * @param[in] addr Address of the data to invalidate.
+ * @param[in] size Size of the data to invalidate.
+ * @note This is a no-op when no backend is provided.
+ */
+RIP_EXTERN void ripInvalidateCache(void* data, size_t size);
+
+#endif /* _RIP_CACHE_H */
