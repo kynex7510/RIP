@@ -71,6 +71,7 @@ void ripGetFormatType(RIPPixelFormat pixelFormat, RIPFormat* outFormat, RIPType*
 /**
  * @brief Get bits per pixel from pixel format.
  * @param[in] pixelFormat Pixel format.
+ * @return Pixel format bits per pixel.
  */
 size_t ripGetPixelFormatBPP(RIPPixelFormat pixelFormat);
 
@@ -78,6 +79,7 @@ size_t ripGetPixelFormatBPP(RIPPixelFormat pixelFormat);
  * @brief Get bits per pixel from image format and pixel type.
  * @param[in] format Image format.
  * @param[in] type Pixel type.
+ * @return Pixel format bits per pixel.
  */
 RIP_INLINE size_t ripGetFormatTypeBPP(RIPFormat format, RIPType type) {
     RIPPixelFormat pixelFormat;
