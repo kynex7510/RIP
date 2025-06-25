@@ -1,0 +1,262 @@
+#include <RIP/Tex3DS.h>
+#include <RIP/Texture.h>
+
+#include "Allocator.h"
+
+typedef struct {
+    void* handle;
+    size_t offset;
+    size_t size;
+    
+    // TODO
+    decompressCallback read;
+} TexStream;
+
+typedef struct __attribute__((packed)) {
+    u16 numSubTextures;
+    u8 widthLog2 : 3;
+    u8 heightLog2 : 3;
+    u8 type : 1;
+    u8 format;
+    u8 mipmapLevels;
+} RawHeader;
+
+typedef struct {
+    u16 width;
+    u16 height;
+    u16 left;
+    u16 top;
+    u16 right;
+    u16 bottom;
+} RawSubTexture;
+
+RIP_INLINE u8* getTexDataPtr(const RIPTexture* tex, size_t face, size_t level) {
+    u8* p = tex->faces[face];
+    if (p) {
+        const size_t offset = ripGetTextureDataOffset(tex->width, tex->height, tex->pixelFormat, level);
+        return p + offset;
+    }
+
+    return NULL;
+}
+
+RIP_INLINE RIPPixelFormat wrapPixelFormat(u8 rawFormat) {
+    switch (rawFormat) {
+        case 0:
+            return RIP_PIXELFORMAT_RGBA8;
+        case 1:
+            return RIP_PIXELFORMAT_RGB8;
+        case 2:
+            return RIP_PIXELFORMAT_RGB5A1;
+        case 3:
+            return RIP_PIXELFORMAT_RGB565;
+        case 4:
+            return RIP_PIXELFORMAT_RGBA4;
+        case 5:
+            return RIP_PIXELFORMAT_LA8;
+        case 6:
+            return RIP_PIXELFORMAT_HILO8;
+        case 7:
+            return RIP_PIXELFORMAT_L8;
+        case 8:
+            return RIP_PIXELFORMAT_A8;
+        case 9:
+            return RIP_PIXELFORMAT_LA4;
+        case 10:
+            return RIP_PIXELFORMAT_L4;
+        case 11:
+            return RIP_PIXELFORMAT_A4;
+        case 12:
+            return RIP_PIXELFORMAT_ETC1;
+        case 13:
+            return RIP_PIXELFORMAT_ETC1A4;
+    }
+
+    RIP_ASSERT(false);
+    return -1;
+}
+
+static ssize_t texStreamReadMem(void* userdata, void* out, size_t size) {
+    TexStream* stream = (TexStream*)userdata;
+    RIP_ASSERT(stream);
+    
+    const size_t actualSize = size < (stream->size - stream->offset) ? size : (stream->size - stream->offset);
+    memcpy(out, (u8*)(stream->handle) + stream->offset, actualSize);
+    stream->offset += actualSize;
+    return actualSize;
+}
+
+static ssize_t texStreamReadFile(void* userdata, void* out, size_t size) {
+    TexStream* stream = (TexStream*)userdata;
+    RIP_ASSERT(stream);
+    
+    const size_t actualSize = fread(out, 1, size, (FILE*)stream->handle);
+    stream->offset += actualSize;
+    return actualSize;
+}
+
+static void getMemTexStream(TexStream* stream, const u8* data, size_t size) {
+    RIP_ASSERT(stream);
+
+    stream->handle = (void*)data;
+    stream->offset = 0;
+    stream->size = size;
+    stream->read = texStreamReadMem;
+}
+
+static void getFileTexStream(TexStream* stream, FILE* f) {
+    RIP_ASSERT(stream);
+
+    int ret = fseek(f, 0, SEEK_END);
+    RIP_ASSERT(ret == 0);
+
+    stream->handle = (void*)f;
+    stream->offset = 0;
+    stream->size = ftell(f);
+    stream->read = texStreamReadFile;
+
+    ret = fseek(f, 0, SEEK_SET);
+    RIP_ASSERT(ret == 0);
+}
+
+static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
+    RIP_ASSERT(stream);
+    RIP_ASSERT(out);
+    
+    // Parse header.
+    RawHeader header;
+    stream->read(stream, &header, sizeof(RawHeader));
+    RIP_ASSERT((header.type == GPU_TEX_2D) || (header.type == GPU_TEX_CUBE_MAP));
+
+    memset(out->faces, 0, 6 * sizeof(u8*));
+    out->isCubeMap = header.type == GPU_TEX_CUBE_MAP;
+
+    out->width = (1 << (header.widthLog2 + 3));
+    RIP_ASSERT(out->width >= 8);
+
+    out->height = (1 << (header.heightLog2 + 3));
+    RIP_ASSERT(out->height >= 8);
+
+    out->pixelFormat = wrapPixelFormat(header.format);
+    out->levels = (header.mipmapLevels + 1); // Add one for base level.
+
+    if (!out->isCubeMap) {
+        out->numOfSubTextures = header.numSubTextures;
+    } else {
+        // It doesn't make sense for a cubemap to have sub-textures.
+        RIP_ASSERT(header.numSubTextures == 0);
+        out->numOfSubTextures = 0; 
+    }
+
+    // Allocate sub textures.
+    out->subTextures = ripHeapAlloc(sizeof(RIPSubTexture) * out->numOfSubTextures);
+    if (!out->subTextures)
+        return false;
+    
+    // Allocate texture data.
+    const size_t dataSize = ripGetTextureDataSize(out->width, out->height, out->pixelFormat, out->levels);
+    const size_t allocSize = ripGetTextureDataSize(out->width, out->height, out->pixelFormat, RIP_MAX_TEX_LEVELS);
+    const size_t numFaces = out->isCubeMap ? 6 : 1;
+
+    for (size_t i = 0; i < numFaces; ++i) {
+        out->faces[i] = ripLinearAlloc(allocSize);
+        if (!out->faces[i]) {
+            ripDestroyTexture(out);
+            return false;
+        }
+    }
+
+    // Load sub-texture info.
+    for (size_t i = 0; i < out->numOfSubTextures; ++i) {
+        RawSubTexture raw;
+        stream->read(stream, &raw, sizeof(RawSubTexture));
+
+        RIPSubTexture* subTex = &out->subTextures[i];
+        subTex->xFactor = (raw.left / 1024.0f);
+        subTex->yFactor = (1.0f - (raw.top / 1024.0f));
+        subTex->width = raw.width;
+        subTex->height = raw.height;
+    }
+
+    // Load texture data.
+    decompressIOVec iov[6];
+
+    for (size_t i = 0; i < numFaces; ++i) {
+        u8* p = getTexDataPtr(out, i, 0);
+        RIP_ASSERT(p);
+        iov[i].data = p;
+        iov[i].size = dataSize;
+    }
+
+    RIP_ASSERT(decompressV(iov, numFaces, stream->read, (void*)stream, 0));
+}
+
+bool ripLoadTexture(const u8* data, size_t size, RIPTexture* out) {
+    if (!data || !out)
+        return false;
+
+    TexStream stream;
+    getMemTexStream(&stream, data, size);
+    return loadTextureImpl(&stream, out);
+}
+
+bool ripLoadTextureFromFile(FILE* f, RIPTexture* out) {
+    if (f == NULL || !out)
+        return false;
+
+    TexStream stream;
+    getFileTexStream(&stream, f);
+    return loadTextureImpl(&stream, out);
+}
+
+bool ripLoadTextureFromPath(const char* path, RIPTexture* out) {
+    if (!path || !out)
+        return false;
+
+    FILE* f = fopen(path, "rb");
+    if (f == NULL)
+        return false;
+
+    const bool ret = ripLoadTextureFromFile(f, out);
+    fclose(f);
+    return ret;
+}
+
+void ripDestroyTexture(RIPTexture* tex) {
+    if (!tex)
+        return;
+
+    const size_t numFaces = tex->isCubeMap ? 6 : 1;
+    for (size_t i = 0; i < numFaces; ++i)
+        ripLinearFree(tex->faces[i]);
+
+    ripHeapFree(tex->subTextures);
+}
+
+size_t ripGetTextureSize(const RIPTexture* tex, size_t level) {
+    if (tex && (level < tex->levels))
+        return (((tex->width >> level) * (tex->height >> level) * ripGetPixelFormatBPP(tex->pixelFormat)) >> 3);
+
+    return 0;
+}
+
+const u8* ripGetTextureData(const RIPTexture* tex, size_t face, size_t level) {
+    if (tex && (level < tex->levels)) {
+        if (face < (tex->isCubeMap ? 6 : 1))
+            return getTexDataPtr(tex, face, level);
+    }
+
+    return NULL;
+}
+
+const u8* ripGetSubTextureData(const RIPTexture* tex, const RIPSubTexture* subTex, size_t level) {
+    // TODO
+    return NULL;
+}
+
+bool ripIsTextureCompressed(RIPPixelFormat pixelFormat) {
+    if (pixelFormat)
+        return pixelFormat == RIP_PIXELFORMAT_ETC1 || pixelFormat == RIP_PIXELFORMAT_ETC1A4;
+
+    return false;
+}
