@@ -26,7 +26,6 @@ using u16 = std::uint16_t;
 using u32 = std::uint32_t;
 
 #define RIP_INLINE inline
-#define RIP_EXTERN extern "C"
 
 #else
 
@@ -39,7 +38,6 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 
 #define RIP_INLINE static inline
-#define RIP_EXTERN extern
 
 #endif // __cplusplus
 

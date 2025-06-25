@@ -33,6 +33,6 @@ target_compile_options(rip PRIVATE -Wall -Werror)
 install(TARGETS rip)
 install(DIRECTORY Include/ DESTINATION include)
 
-if (KYGX_ENABLE_TESTS)
+if (RIP_ENABLE_TESTS)
     #add_subdirectory(Tests)
 endif()

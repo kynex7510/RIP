@@ -7,6 +7,10 @@
 
 #include <RIP/Format.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 /**
  * @brief Applies tiling to the specified image.
  * @param[in] src Source address.
@@ -18,7 +22,7 @@
  * @note When compiling for 3DS with an hardware backend, the buffers must be
  * physically contiguous and readable by the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
-RIP_EXTERN bool ripTile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat);
+bool ripTile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat);
 
 /**
  * @brief Reverts tiling in the specified image.
@@ -31,6 +35,10 @@ RIP_EXTERN bool ripTile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
  * @note When compiling for 3DS with an hardware backend, the buffers must be
  * physically contiguous and readable by the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
-RIP_EXTERN bool ripUntile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat);
+bool ripUntile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* _RIP_TILING_H */

@@ -47,6 +47,10 @@ typedef enum {
     RIP_PIXELFORMAT_ETC1A4, ///< ETC1A4
 } RIPPixelFormat;
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 /**
  * @brief Get pixel format from image format and pixel type.
  * @param[in] format Image format.
@@ -54,7 +58,7 @@ typedef enum {
  * @param[out] out Pixel format.
  * @return True if the format-type pair make up a valid pixel format, false otherwise.
  */
-RIP_EXTERN bool ripGetPixelFormat(RIPFormat format, RIPType type, RIPPixelFormat* out);
+bool ripGetPixelFormat(RIPFormat format, RIPType type, RIPPixelFormat* out);
 
 /**
  * @brief Get image format and pixel type from pixel format.
@@ -62,13 +66,13 @@ RIP_EXTERN bool ripGetPixelFormat(RIPFormat format, RIPType type, RIPPixelFormat
  * @param[out] format Image format.
  * @param[out] type Pixel type.
  */
-RIP_EXTERN void ripGetFormatType(RIPPixelFormat pixelFormat, RIPFormat* outFormat, RIPType* outType);
+void ripGetFormatType(RIPPixelFormat pixelFormat, RIPFormat* outFormat, RIPType* outType);
 
 /**
  * @brief Get bits per pixel from pixel format.
  * @param[in] pixelFormat Pixel format.
  */
-RIP_EXTERN size_t ripGetPixelFormatBPP(RIPPixelFormat pixelFormat);
+size_t ripGetPixelFormatBPP(RIPPixelFormat pixelFormat);
 
 /**
  * @brief Get bits per pixel from image format and pixel type.
@@ -83,5 +87,9 @@ RIP_INLINE size_t ripGetFormatTypeBPP(RIPFormat format, RIPType type) {
 
     return 0;
 }
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* _RIP_FORMAT_H */

@@ -7,6 +7,10 @@
 
 #include <RIP/Format.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 /**
  * @brief Convert raw image data into a format that the 3DS GPU understands.
  * @param[in] src Source address.
@@ -19,7 +23,7 @@
  * @note When compiling for 3DS with an hardware backend, the destination buffer
  * must be physically contiguous and readable by the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
-RIP_EXTERN bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
+bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
 /**
  * @brief This is the opposite of @ripConvertToNative.
@@ -33,7 +37,7 @@ RIP_EXTERN bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height
  * @note When compiling for 3DS with an hardware backend, the source buffer must
  * be physically contigous and readable by the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
-RIP_EXTERN bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
+bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
 /**
  * @brief Like @ripConvertToNative, but the result is applied on the same buffer.
@@ -43,7 +47,7 @@ RIP_EXTERN bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 heig
  * @param[in] pixelFormat Image pixel format.
  * @result True if the conversion completed successfully, false otherwise.
  */
-RIP_EXTERN bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
 
 /**
  * @brief Like @ripConvertFromNative, but the result is applied on the same buffer.
@@ -53,6 +57,10 @@ RIP_EXTERN bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixel
  * @param[in] pixelFormat Image pixel format.
  * @result True if the conversion completed successfully, false otherwise.
  */
-RIP_EXTERN bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* _RIP_CONVERT_H */

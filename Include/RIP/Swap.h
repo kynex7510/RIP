@@ -7,6 +7,10 @@
 
 #include <RIP/Format.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 /**
  * @brief Swap image pixels bytes.
  * @param[in] src Source address.
@@ -18,7 +22,7 @@
  * @note This function is always implemented in software, as such when compiling
  * for HOS none of the buffers can be in VRAM. 
  */
-RIP_EXTERN void ripSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
+void ripSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
 /**
  * @brief Like @ripSwapBytes, but the result is applied on the same buffer.
@@ -29,6 +33,10 @@ RIP_EXTERN void ripSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPP
  * @note This function is always implemented in software, as such when compiling
  * for HOS none of the buffers can be in VRAM. 
  */
-RIP_EXTERN void ripSwapBytesInPlace(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+void ripSwapBytesInPlace(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* _RIP_SWAP_H */
