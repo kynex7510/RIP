@@ -46,7 +46,7 @@ bool ripConvertAndLoadC3DTexImage(C3D_Tex* tex, const void* data, GPU_TEXFACE fa
         return NULL;
 
     bool ret = false;
-    if (ripConvertFromNative(data, tmp, tex->width, tex->height, pixelFormat, false)) {
+    if (ripConvertToNative(data, tmp, tex->width, tex->height, pixelFormat, false)) {
         C3D_TexLoadImage(tex, tmp, face, level);
         ret = true;
     }
@@ -57,7 +57,7 @@ bool ripConvertAndLoadC3DTexImage(C3D_Tex* tex, const void* data, GPU_TEXFACE fa
 
 bool ripConvertInPlaceAndLoadC3DTexImage(C3D_Tex* tex, void* data, GPU_TEXFACE face, int level) {
     const RIPPixelFormat pixelFormat = cvtPF(tex->fmt);
-    if (ripConvertInPlaceToNative(data, tex->width, tex->height, pixelFormat)) {
+    if (ripConvertInPlaceToNative(data, tex->width, tex->height, pixelFormat, false)) {
         C3D_TexLoadImage(tex, data, face, level);
         return true;
     }
