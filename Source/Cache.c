@@ -24,14 +24,3 @@ void ripFlushDataCache(void* data, size_t size) {
     flushDCacheRange(data, size);
 #endif
 }
-
-void ripInvalidateDataCache(void* data, size_t size) {
-#if RIP_BACKEND == RIP_BACKEND_KYGX
-    kygxInvalidateDataCache(data, size);
-#elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND == RIP_BACKEND_CITRO3D
-    if (R_FAILED(GSPGPU_InvalidateDataCache(data, size)))
-        svcBreak(USERBREAK_PANIC);
-#elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
-    invalidateDCacheRange(data, size);
-#endif
-}

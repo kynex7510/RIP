@@ -19,14 +19,6 @@ extern "C" {
  */
 void ripFlushDataCache(void* data, size_t size);
 
-/**
- * @brief Invalidate data cache.
- * @param[in] addr Address of the data to invalidate.
- * @param[in] size Size of the data to invalidate.
- * @note This is a no-op when no backend is provided.
- */
-void ripInvalidateDataCache(void* data, size_t size);
-
 #ifdef __cplusplus
 }
 #endif // __cplusplus
