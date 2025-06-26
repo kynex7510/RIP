@@ -72,7 +72,7 @@ RIP_INLINE void hwTiling(const u8* src, u8* dst, size_t width, size_t height, RI
     transferFlags.verticalFlip = false;
     transferFlags.blockMode32 = false;
 
-    kygxSyncDisplayTransfer(src, dst, width, height, width, height, kygxMakeDisplayTransferFlags(&transferFlags));
+    kygxSyncDisplayTransferChecked(src, dst, width, height, width, height, &transferFlags);
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND == RIP_BACKEND_CITRO3D // libctru || citro3d
     GX_TRANSFER_FORMAT fmt;
 
