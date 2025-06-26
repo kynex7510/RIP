@@ -1,4 +1,5 @@
 #include <RIP/Tiling.h>
+#include <RIP/Cache.h>
 
 #if RIP_BACKEND == RIP_BACKEND_KYGX
 #include <GX/Wrappers/DisplayTransfer.h>
@@ -167,7 +168,16 @@ static bool tilingImpl(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFo
 
     // Use the hardware if possible.
     if (canUseHW(width, height, pixelFormat)) {
+        const size_t size = width * height * ripGetPixelFormatBPP(pixelFormat) >> 3;
+
+        // Ensure the hardware can access data correctly.
+        ripFlushDataCache(src, size);
+        ripFlushDataCache(dst, size);
+
         hwTiling(src, dst, width, height, pixelFormat, makeTiled);
+
+        // Avoid possible prefetches.
+        ripInvalidateDataCache(dst, size);
     } else {
         swTiling(src, dst, width, height, ripGetPixelFormatBPP(pixelFormat), makeTiled);
     }
