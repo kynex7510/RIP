@@ -11,7 +11,7 @@
 #include <drivers/cache.h>
 #endif
 
-void ripFlushCache(void* data, size_t size) {
+void ripFlushDataCache(void* data, size_t size) {
 #if RIP_BACKEND == RIP_BACKEND_KYGX
     GXFlushCacheRegionsBuffer flush;
     flush.addr = data;
@@ -25,7 +25,7 @@ void ripFlushCache(void* data, size_t size) {
 #endif
 }
 
-void ripInvalidateCache(void* data, size_t size) {
+void ripInvalidateDataCache(void* data, size_t size) {
 #if RIP_BACKEND == RIP_BACKEND_KYGX
     kygxInvalidateDataCache(data, size);
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND == RIP_BACKEND_CITRO3D

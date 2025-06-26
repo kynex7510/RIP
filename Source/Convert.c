@@ -14,7 +14,7 @@ bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
         return false;
 
     ripSwapBytes(src, tmp, width, height, pixelFormat, flip);
-    ripFlushCache(tmp, size);
+    ripFlushDataCache(tmp, size);
     const bool ret = ripTile(tmp, dst, width, height, pixelFormat);
 
     ripLinearFree(tmp);
@@ -29,7 +29,7 @@ bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixe
 
     bool ret = false;
     if (ripTile(src, tmp, width, height, pixelFormat)) {
-        ripInvalidateCache(tmp, size);
+        ripInvalidateDataCache(tmp, size);
         ripSwapBytes(tmp, dst, width, height, pixelFormat, flip);
         ret = true;
     }
@@ -45,11 +45,11 @@ bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixe
         return false;
 
     ripSwapBytesInPlace(p, width, height, pixelFormat);
-    ripFlushCache(p, size);
+    ripFlushDataCache(p, size);
 
     bool ret = false;
     if (ripTile(p, tmp, width, height, pixelFormat)) {
-        ripInvalidateCache(tmp, size);
+        ripInvalidateDataCache(tmp, size);
         memcpy(p, tmp, size);
         ret = true;
     }
@@ -66,7 +66,7 @@ bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pi
 
     bool ret = false;
     if (ripUntile(p, tmp, width, height, pixelFormat)) {
-        ripInvalidateCache(tmp, size);
+        ripInvalidateDataCache(tmp, size);
         memcpy(p, tmp, size);
         ripSwapBytesInPlace(p, width, height, pixelFormat);
         ret = true;

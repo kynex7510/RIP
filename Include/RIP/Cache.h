@@ -17,7 +17,7 @@ extern "C" {
  * @param[in] size Size of the data to flush.
  * @note This is a no-op when no backend is provided.
  */
-void ripFlushCache(void* data, size_t size);
+void ripFlushDataCache(void* data, size_t size);
 
 /**
  * @brief Invalidate data cache.
@@ -25,7 +25,7 @@ void ripFlushCache(void* data, size_t size);
  * @param[in] size Size of the data to invalidate.
  * @note This is a no-op when no backend is provided.
  */
-void ripInvalidateCache(void* data, size_t size);
+void ripInvalidateDataCache(void* data, size_t size);
 
 #ifdef __cplusplus
 }
