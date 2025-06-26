@@ -35,37 +35,33 @@ bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixe
     return ret;
 }
 
-bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat) {
+bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
+    bool ret = false;
     const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
     void* tmp = ripLinearAlloc(size);
-    if (!tmp)
-        return false;
 
-    ripSwapBytesInPlace(p, width, height, pixelFormat);
-
-    bool ret = false;
-    if (ripTile(p, tmp, width, height, pixelFormat)) {
-        memcpy(p, tmp, size);
-        ret = true;
+    if (tmp) {
+        ripSwapBytes(p, tmp, width, height, pixelFormat, flip);
+        ret = ripTile(tmp, p, width, height, pixelFormat);
+        ripLinearFree(tmp);
     }
 
-    ripLinearFree(tmp);
     return ret;
 }
 
-bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat) {
+bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
+    bool ret = false;
     const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
     void* tmp = ripLinearAlloc(size);
-    if (!tmp)
-        return false;
 
-    bool ret = false;
-    if (ripUntile(p, tmp, width, height, pixelFormat)) {
-        memcpy(p, tmp, size);
-        ripSwapBytesInPlace(p, width, height, pixelFormat);
-        ret = true;
+    if (tmp) {
+        if (ripUntile(p, tmp, width, height, pixelFormat)) {
+            ripSwapBytes(tmp, p, width, height, pixelFormat, flip);
+            ret = true;
+        }
+
+        ripLinearFree(tmp);
     }
 
-    ripLinearFree(tmp);
     return ret;
 }

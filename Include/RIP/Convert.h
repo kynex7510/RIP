@@ -45,9 +45,12 @@ bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixe
  * @param[in] width Image width.
  * @param[in] height Image height.
  * @param[in] pixelFormat Image pixel format.
+ * @param[in] flip Whether to flip the image vertically.
  * @result True if the conversion completed successfully, false otherwise.
+ * @note When compiling for 3DS with an hardware backend, the buffer must be
+ * physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
-bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
 /**
  * @brief Like @ripConvertFromNative, but the result is applied on the same buffer.
@@ -55,9 +58,12 @@ bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixe
  * @param[in] width Image width.
  * @param[in] height Image height.
  * @param[in] pixelFormat Image pixel format.
+ * @param[in] flip Whether to flip the image vertically.
  * @result True if the conversion completed successfully, false otherwise.
+ * @note When compiling for 3DS with an hardware backend, the buffer must be
+ * physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
-bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat);
+bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
 #ifdef __cplusplus
 }
