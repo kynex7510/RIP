@@ -14,6 +14,7 @@ set(RIP_SOURCES
     Source/Convert.c
     Source/Format.c
     Source/Swap.c
+    Source/Tex3DS.c
     Source/Tiling.c
 )
 

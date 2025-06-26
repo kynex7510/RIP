@@ -45,7 +45,7 @@ typedef uint32_t u32;
 #if RIP_BACKEND == RIP_BACKEND_KYGX
 #define RIP_ASSERT(cond) KYGX_ASSERT(cond)
 #else
-#define RIP_ASSERT(cond)
+#define RIP_ASSERT(cond) (void)(cond)
 #endif
 
 #endif /* _RIP_DEFS_H */

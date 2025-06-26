@@ -34,7 +34,7 @@ bool ripLoadTextureFromFile(FILE* f, RIPTexture* out);
 bool ripLoadTextureFromPath(const char* path, RIPTexture* out);
 void ripDestroyTexture(RIPTexture* tex);
 
-const size_t ripGetTextureSize(const RIPTexture* tex, size_t level);
+size_t ripGetTextureSize(const RIPTexture* tex, size_t level);
 const u8* ripGetTextureData(const RIPTexture* tex, size_t face, size_t level);
 const u8* ripGetSubTextureData(const RIPTexture* tex, const RIPSubTexture* subTex, size_t level);
 

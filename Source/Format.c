@@ -77,7 +77,7 @@ bool ripGetPixelFormat(RIPFormat format, RIPType type, RIPPixelFormat* out) {
             break;
         case RIP_FORMAT_RGBA:
             pixelFormat = getPFRGBA(type);
-        case RIP_FORMAT_HILO8:
+        case RIP_FORMAT_HILO:
             if (type == RIP_TYPE_UNSIGNED_BYTE)
                 pixelFormat = RIP_PIXELFORMAT_HILO8;
             break;
@@ -151,7 +151,7 @@ void ripGetFormatType(RIPPixelFormat pixelFormat, RIPFormat* outFormat, RIPType*
             type = RIP_TYPE_UNSIGNED_BYTE_4_4;
             break;
         case RIP_PIXELFORMAT_HILO8:
-            format = RIP_FORMAT_HILO8;
+            format = RIP_FORMAT_HILO;
             type = RIP_TYPE_UNSIGNED_BYTE;
             break;
         case RIP_PIXELFORMAT_ETC1:

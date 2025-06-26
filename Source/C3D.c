@@ -41,8 +41,7 @@ static RIPPixelFormat cvtPF(GPU_TEXCOLOR fmt) {
 
 bool ripConvertAndLoadC3DTexImage(C3D_Tex* tex, const void* data, GPU_TEXFACE face, int level) {
     const RIPPixelFormat pixelFormat = cvtPF(tex->fmt);
-    const size_t size = linearAlloc(tex->width * tex->height * ripGetPixelFormatBPP(pixelFormat));
-    void* tmp = linearAlloc(size);
+    void* tmp = linearAlloc((tex->width * tex->height * ripGetPixelFormatBPP(pixelFormat)) >> 3);
     if (!tmp)
         return NULL;
 

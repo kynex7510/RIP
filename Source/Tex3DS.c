@@ -3,12 +3,46 @@
 
 #include "Allocator.h"
 
+#if RIP_BACKEND == RIP_BACKEND_KYGX
+#ifdef KYGX_BAREMETAL
+#define COMPRESSION_USE_LIBN3DS
+#else
+#define COMPRESSION_USE_LIBCTRU
+#endif // KYGX_BAREMETAL
+#elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND_CITRO3D
+#define COMPRESSION_USE_LIBCTRU
+#elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
+#define COMPRESSION_USE_LIBN3DS
+#endif
+
+#ifdef COMPRESSION_USE_LIBCTRU
+#include <3ds.h>
+#elif COMPRESSION_USE_LIBN3DS
+// TODO
+#endif
+
+#define TEX_TYPE_2D 0
+#define TEX_TYPE_CUBEMAP 1
+
+#define TEX_FORMAT_RGBA8 0
+#define TEX_FORMAT_RGB8 1
+#define TEX_FORMAT_RGB5A1 2
+#define TEX_FORMAT_RGB565 3
+#define TEX_FORMAT_RGBA4 4
+#define TEX_FORMAT_LA8 5
+#define TEX_FORMAT_HILO8 6
+#define TEX_FORMAT_L8 7
+#define TEX_FORMAT_A8 8
+#define TEX_FORMAT_LA4 9
+#define TEX_FORMAT_L4 10
+#define TEX_FORMAT_A4 11
+#define TEX_FORMAT_ETC1 12
+#define TEX_FORMAT_ETC1A4 13
+
 typedef struct {
     void* handle;
     size_t offset;
     size_t size;
-    
-    // TODO
     decompressCallback read;
 } TexStream;
 
@@ -42,33 +76,33 @@ RIP_INLINE u8* getTexDataPtr(const RIPTexture* tex, size_t face, size_t level) {
 
 RIP_INLINE RIPPixelFormat wrapPixelFormat(u8 rawFormat) {
     switch (rawFormat) {
-        case 0:
+        case TEX_FORMAT_RGBA8:
             return RIP_PIXELFORMAT_RGBA8;
-        case 1:
+        case TEX_FORMAT_RGB8:
             return RIP_PIXELFORMAT_RGB8;
-        case 2:
+        case TEX_FORMAT_RGB5A1:
             return RIP_PIXELFORMAT_RGB5A1;
-        case 3:
+        case TEX_FORMAT_RGB565:
             return RIP_PIXELFORMAT_RGB565;
-        case 4:
+        case TEX_FORMAT_RGBA4:
             return RIP_PIXELFORMAT_RGBA4;
-        case 5:
+        case TEX_FORMAT_LA8:
             return RIP_PIXELFORMAT_LA8;
-        case 6:
+        case TEX_FORMAT_HILO8:
             return RIP_PIXELFORMAT_HILO8;
-        case 7:
+        case TEX_FORMAT_L8:
             return RIP_PIXELFORMAT_L8;
-        case 8:
+        case TEX_FORMAT_A8:
             return RIP_PIXELFORMAT_A8;
-        case 9:
+        case TEX_FORMAT_LA4:
             return RIP_PIXELFORMAT_LA4;
-        case 10:
+        case TEX_FORMAT_L4:
             return RIP_PIXELFORMAT_L4;
-        case 11:
+        case TEX_FORMAT_A4:
             return RIP_PIXELFORMAT_A4;
-        case 12:
+        case TEX_FORMAT_ETC1:
             return RIP_PIXELFORMAT_ETC1;
-        case 13:
+        case TEX_FORMAT_ETC1A4:
             return RIP_PIXELFORMAT_ETC1A4;
     }
 
@@ -126,10 +160,10 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
     // Parse header.
     RawHeader header;
     stream->read(stream, &header, sizeof(RawHeader));
-    RIP_ASSERT((header.type == GPU_TEX_2D) || (header.type == GPU_TEX_CUBE_MAP));
+    RIP_ASSERT(header.type == TEX_TYPE_2D || header.type == TEX_TYPE_CUBEMAP);
 
     memset(out->faces, 0, 6 * sizeof(u8*));
-    out->isCubeMap = header.type == GPU_TEX_CUBE_MAP;
+    out->isCubeMap = header.type == TEX_TYPE_CUBEMAP;
 
     out->width = (1 << (header.widthLog2 + 3));
     RIP_ASSERT(out->width >= 8);
@@ -138,7 +172,7 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
     RIP_ASSERT(out->height >= 8);
 
     out->pixelFormat = wrapPixelFormat(header.format);
-    out->levels = (header.mipmapLevels + 1); // Add one for base level.
+    out->levels = header.mipmapLevels + 1; // Add one for base level.
 
     if (!out->isCubeMap) {
         out->numOfSubTextures = header.numSubTextures;
@@ -172,8 +206,8 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
         stream->read(stream, &raw, sizeof(RawSubTexture));
 
         RIPSubTexture* subTex = &out->subTextures[i];
-        subTex->xFactor = (raw.left / 1024.0f);
-        subTex->yFactor = (1.0f - (raw.top / 1024.0f));
+        subTex->xFactor = raw.left / 1024.0f;
+        subTex->yFactor = 1.0f - (raw.top / 1024.0f);
         subTex->width = raw.width;
         subTex->height = raw.height;
     }
@@ -189,6 +223,7 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
     }
 
     RIP_ASSERT(decompressV(iov, numFaces, stream->read, (void*)stream, 0));
+    return true;
 }
 
 bool ripLoadTexture(const u8* data, size_t size, RIPTexture* out) {
@@ -234,7 +269,7 @@ void ripDestroyTexture(RIPTexture* tex) {
 }
 
 size_t ripGetTextureSize(const RIPTexture* tex, size_t level) {
-    if (tex && (level < tex->levels))
+    if (tex && level < tex->levels)
         return (((tex->width >> level) * (tex->height >> level) * ripGetPixelFormatBPP(tex->pixelFormat)) >> 3);
 
     return 0;

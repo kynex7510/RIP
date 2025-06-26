@@ -9,7 +9,7 @@ Download a prebuilt version, use as a CMake dependency, or build manually.
 ### HOS build (KYGX/libctru/citro3d backend)
 
 ```sh
-cmake -B BuildHOS -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/3DS.cmake" -DCMAKE_BUILD_TYPE=Release -RIP_BACKEND="{BACKEND_HERE}" -DRIP_ENABLE_TESTS=ON
+cmake -B BuildHOS -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/3DS.cmake" -DCMAKE_BUILD_TYPE=Release -DRIP_BACKEND="{BACKEND_HERE}" -DRIP_ENABLE_TESTS=ON
 cmake --build BuildHOS --config Release
 cmake --install BuildHOS --prefix BuildHOS/Release
 ```
