@@ -1,0 +1,7 @@
+if (RIP_BACKEND STREQUAL "kygx")
+    #add_subdirectory(KYGX)
+elseif (RIP_BACKEND STREQUAL "libctru")
+    #add_subdirectory(libctru)
+elseif (RIP_BACKEND STREQUAL "citro3d")
+    add_subdirectory(C3D)
+endif()

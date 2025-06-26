@@ -35,5 +35,5 @@ install(TARGETS rip)
 install(DIRECTORY Include/ DESTINATION include)
 
 if (RIP_ENABLE_TESTS)
-    #add_subdirectory(Tests)
+    add_subdirectory(Tests)
 endif()
