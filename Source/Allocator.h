@@ -39,8 +39,6 @@ RIP_INLINE void* ripLinearAlloc(size_t size) {
 #elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
 // TODO
 #error "Unimplemented!"
-#else
-    return malloc(size);
 #endif
 }
 
@@ -52,8 +50,6 @@ RIP_INLINE void ripLinearFree(void* p) {
 #elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
 // TODO
 #error "Unimplemented!"
-#else // None (software)
-    free(p);
 #endif
 }
 

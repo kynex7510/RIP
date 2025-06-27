@@ -140,11 +140,6 @@ RIP_INLINE void hwTiling(const u8* src, u8* dst, size_t width, size_t height, RI
 }
 
 RIP_INLINE bool canUseHW(u16 width, u16 height, RIPPixelFormat pixelFormat) {
-    if (RIP_BACKEND != RIP_BACKEND_KYGX &&
-        RIP_BACKEND != RIP_BACKEND_LIBCTRU &&
-        RIP_BACKEND != RIP_BACKEND_LIBN3DS)
-        return false;
-
     // Transfer engine doesn't support anything lower than 64x64.
     if (width < 64 || height < 64)
         return false;

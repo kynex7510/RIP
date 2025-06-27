@@ -19,8 +19,7 @@
 #include <3ds.h>
 #elif COMPRESSION_USE_LIBN3DS
 // TODO
-#else
-#error "Not supported!"
+#error "Not implemented!"
 #endif
 
 #define TEX_TYPE_2D 0

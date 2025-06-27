@@ -5,16 +5,14 @@
 #ifndef _RIP_DEFS_H
 #define _RIP_DEFS_H
 
-#define RIP_BACKEND_NONE 0
-#define RIP_BACKEND_KYGX 1
-#define RIP_BACKEND_LIBCTRU 2
-#define RIP_BACKEND_CITRO3D 3
-#define RIP_BACKEND_LIBN3DS 4
+#define RIP_BACKEND_KYGX 0x01
+#define RIP_BACKEND_LIBCTRU 0x02
+#define RIP_BACKEND_CITRO3D 0x04
+#define RIP_BACKEND_LIBN3DS 0x08
 
-#ifndef RIP_BACKEND
-#warning "No backend set, defaulting to software implementation"
-#define RIP_BACKEND RIP_BACKEND_NONE
-#endif // RIP_BACKEND
+#if !(RIP_BACKEND & 0x0F)
+#error "Invalid backend!"
+#endif // RIP_BACKEND & 0x0F
 
 #ifdef __cplusplus
 

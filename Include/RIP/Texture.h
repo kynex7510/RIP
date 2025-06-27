@@ -7,7 +7,8 @@
 
 #include <RIP/Format.h>
 
-#define RIP_MAX_TEX_LEVELS 8 ///< Max possible number of texture levels.
+#define RIP_MAX_TEX_DIMS 1024 ///< Max texture dimension.
+#define RIP_MAX_TEX_LEVELS 8  ///< Max possible number of texture levels.
 
 #ifdef __cplusplus
 extern "C" {

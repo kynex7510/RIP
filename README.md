@@ -1,12 +1,12 @@
 # RIP
 
-Cross-platform raw image processing library for the 3DS.
+Hardware-accelerated raw image processing library for the 3DS.
 
 ## Setup
 
 Download a prebuilt version, use as a CMake dependency, or build manually.
 
-### HOS build (KYGX/libctru/citro3d backend)
+### HOS build (KYGX/libctru/citro3d)
 
 ```sh
 cmake -B BuildHOS -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="$DEVKITPRO/cmake/3DS.cmake" -DCMAKE_BUILD_TYPE=Release -DRIP_BACKEND="{BACKEND_HERE}" -DRIP_ENABLE_TESTS=ON

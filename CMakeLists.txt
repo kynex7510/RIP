@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-project(rip C)
+project(rip C ASM)
 
 option(RIP_BACKEND "Set backend" "")
 option(RIP_ENABLE_TESTS "Enable tests compilation" OFF)
@@ -14,6 +14,7 @@ set(RIP_SOURCES
     Source/Convert.c
     Source/Format.c
     Source/Swap.c
+    Source/SwapBytes.s
     Source/Tex3DS.c
     Source/Tiling.c
 )
@@ -26,6 +27,8 @@ elseif (RIP_BACKEND STREQUAL "libctru")
     target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_LIBCTRU)
 elseif (RIP_BACKEND STREQUAL "citro3d")
     target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_CITRO3D)
+else()
+    message(FATAL_ERROR "Invalid backend, use one of the following: kygx, libctru, citro3d")
 endif()
 
 target_include_directories(rip PUBLIC Include)

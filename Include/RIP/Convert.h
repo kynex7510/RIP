@@ -20,8 +20,7 @@ extern "C" {
  * @param[in] pixelFormat Image pixel format.
  * @param[in] flip Whether to flip the image vertically.
  * @result True if the conversion completed successfully, false otherwise.
- * @note When compiling for 3DS with an hardware backend, the destination buffer
- * must be physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
+ * @note The buffers must be physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
 bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
@@ -34,8 +33,7 @@ bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
  * @param[in] pixelFormat Image pixel format.
  * @param[in] flip Whether to flip the image vertically.
  * @result True if the conversion completed successfully, false otherwise.
- * @note When compiling for 3DS with an hardware backend, the source buffer must
- * be physically contigous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
+ * @note The buffers must be physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
 bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
@@ -47,8 +45,7 @@ bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixe
  * @param[in] pixelFormat Image pixel format.
  * @param[in] flip Whether to flip the image vertically.
  * @result True if the conversion completed successfully, false otherwise.
- * @note When compiling for 3DS with an hardware backend, the buffer must be
- * physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
+ * @note The buffer must be physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
 bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
@@ -60,8 +57,7 @@ bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixe
  * @param[in] pixelFormat Image pixel format.
  * @param[in] flip Whether to flip the image vertically.
  * @result True if the conversion completed successfully, false otherwise.
- * @note When compiling for 3DS with an hardware backend, the buffer must be
- * physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
+ * @note The buffer must be physically contiguous and accessible from the GPU (eg. FCRAM/VRAM/QTMRAM memory).
  */
 bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
