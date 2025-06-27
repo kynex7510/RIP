@@ -2,51 +2,53 @@
 #include <RIP/Swap.h>
 #include <RIP/Tiling.h>
 
-#include <string.h> // memcpy
-
 #include "Allocator.h"
 
 bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
-    const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
-    void* tmp = ripLinearAlloc(size);
-    if (!tmp)
-        return false;
+    bool ret = false;
 
-    ripSwapBytes(src, tmp, width, height, pixelFormat, flip);
-    const bool ret = ripTile(tmp, dst, width, height, pixelFormat);
+    if (flip) {
+        const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
+        void* tmp = ripLinearAlloc(size);
 
-    ripLinearFree(tmp);
+        if (tmp) {
+            ripSwapBytes(src, tmp, width, height, pixelFormat, true);
+            if (ripTile(tmp, dst, width, height, pixelFormat))
+                ret = true;
+
+            ripLinearFree(tmp);
+        }
+    } else {
+        if (ripTile(src, dst, width, height, pixelFormat)) {
+            ripSwapBytes(dst, dst, width, height, pixelFormat, false);
+            ret = true;
+        }
+    }
+
     return ret;
 }
 
 bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
-    const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
-    void* tmp = ripLinearAlloc(size);
-    if (!tmp)
-        return false;
-
-    bool ret = false;
-    if (ripTile(src, tmp, width, height, pixelFormat)) {
-        ripSwapBytes(tmp, dst, width, height, pixelFormat, flip);
-        ret = true;
+    if (ripUntile(src, dst, width, height, pixelFormat)) {
+        ripSwapBytes(dst, dst, width, height, pixelFormat, flip);
+        return true;
     }
 
-    ripLinearFree(tmp);
-    return ret;
+    return false;
 }
 
 bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
-    bool ret = false;
     const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
     void* tmp = ripLinearAlloc(size);
 
     if (tmp) {
         ripSwapBytes(p, tmp, width, height, pixelFormat, flip);
-        ret = ripTile(tmp, p, width, height, pixelFormat);
+        const bool ret = ripTile(tmp, p, width, height, pixelFormat);
         ripLinearFree(tmp);
+        return ret;
     }
 
-    return ret;
+    return false;
 }
 
 bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
