@@ -22,6 +22,7 @@ extern "C" {
  * @param[in] face Specifies texture face.
  * @param[in] level Specifies mipmap level.
  * @result True if the conversion completed successfully, false otherwise.
+ * @note The buffer must be in linear memory/QTMRAM.
  */
 bool ripConvertAndLoadC3DTexImage(C3D_Tex* tex, const void* data, GPU_TEXFACE face, int level);
 
@@ -32,6 +33,7 @@ bool ripConvertAndLoadC3DTexImage(C3D_Tex* tex, const void* data, GPU_TEXFACE fa
  * @param[in] face Specifies texture face.
  * @param[in] level Specifies mipmap level.
  * @result True if the conversion completed successfully, false otherwise.
+ * @note The buffer must be in linear memory/QTMRAM.
  */
 bool ripConvertInPlaceAndLoadC3DTexImage(C3D_Tex* tex, void* data, GPU_TEXFACE face, int level);
 

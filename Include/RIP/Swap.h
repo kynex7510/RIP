@@ -19,7 +19,7 @@ extern "C" {
  * @param[in] height Image height.
  * @param[in] pixelFormat Image pixel format.
  * @param[in] flip Whether to flip the image vertically.
- * @note The buffers must not be in VRAM. 
+ * @note The buffers must not be in VRAM.
  */
 void ripSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 

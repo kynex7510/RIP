@@ -19,7 +19,7 @@ extern "C" {
  * @param[in] height Image height.
  * @param[in] pixelFormat Image pixel format.
  * @result True if tiling completed successfully, false otherwise.
- * @note The buffers must be physically contiguous and readable by the GPU (eg. FCRAM/VRAM/QTMRAM memory).
+ * @note The buffers must be in linear memory/QTMRAM.
  */
 bool ripTile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat);
 
@@ -31,7 +31,7 @@ bool ripTile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixel
  * @param[in] height Image height.
  * @param[in] pixelFormat Image pixel format.
  * @result True if untiling completed successfully, false otherwise.
- * @note The buffers must be physically contiguous and readable by the GPU (eg. FCRAM/VRAM/QTMRAM memory).
+ * @note The buffers must be in linear memory/QTMRAM.
  */
 bool ripUntile(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat);
 
