@@ -41,6 +41,7 @@ typedef uint32_t u32;
 
 // Enable diagnostics if we're using KYGX.
 #if RIP_BACKEND == RIP_BACKEND_KYGX
+#include <KYGX/Defs.h>
 #define RIP_ASSERT(cond) KYGX_ASSERT(cond)
 #else
 #define RIP_ASSERT(cond) (void)(cond)
