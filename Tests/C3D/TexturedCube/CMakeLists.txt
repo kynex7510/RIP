@@ -11,6 +11,6 @@ add_executable(RIP-C3D-TexturedCube
     Source/Main.c
     Source/stb_image.c
 )
-target_link_libraries(RIP-C3D-TexturedCube PRIVATE citro3d rip shaders)
+target_link_libraries(RIP-C3D-TexturedCube PRIVATE rip shaders)
 
 ctr_create_3dsx(RIP-C3D-TexturedCube ROMFS RomFS)

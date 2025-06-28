@@ -42,7 +42,7 @@ rip_swapBytesImpl:
     cmp r2, #4
     blo _rip_swapBytes2_halfword
 
-    // Optimized version until we have a multiple of 4 size.
+    // Optimized version that handles 2 pixels at time.
     _rip_swapBytes2_word:
     ldr r3, [r1], #4
     rev16 r3, r3

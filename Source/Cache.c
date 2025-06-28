@@ -1,8 +1,8 @@
 #include <RIP/Cache.h>
 
 #if RIP_BACKEND == RIP_BACKEND_KYGX
-#include <GX/Wrappers/FlushCacheRegions.h>
-#include <GX/Utility.h>
+#include <KYGX/Wrappers/FlushCacheRegions.h>
+#include <KYGX/Utility.h>
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU
 #include <3ds.h>
 #elif RIP_BACKEND == RIP_BACKEND_CITRO3D
@@ -13,10 +13,7 @@
 
 void ripFlushDataCache(const void* data, size_t size) {
 #if RIP_BACKEND == RIP_BACKEND_KYGX
-    GXFlushCacheRegionsBuffer flush;
-    flush.addr = data;
-    flush.size = size;
-    kygxSyncFlushCacheRegions(&flush, NULL, NULL);
+    kygxSyncFlushSingleBuffer(data, size);
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND == RIP_BACKEND_CITRO3D
     if (R_FAILED(GSPGPU_FlushDataCache(data, size)))
         svcBreak(USERBREAK_PANIC);

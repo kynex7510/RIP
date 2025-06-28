@@ -3,6 +3,8 @@
 
 #include "Allocator.h"
 
+#include <string.h> // memcpy, memset
+
 #if RIP_BACKEND == RIP_BACKEND_KYGX
 #ifdef KYGX_BAREMETAL
 #define COMPRESSION_USE_LIBN3DS

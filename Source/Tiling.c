@@ -2,7 +2,7 @@
 #include <RIP/Cache.h>
 
 #if RIP_BACKEND == RIP_BACKEND_KYGX
-#include <GX/Wrappers/DisplayTransfer.h>
+#include <KYGX/Wrappers/DisplayTransfer.h>
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU
 #include <3ds.h>
 #elif RIP_BACKEND == RIP_BACKEND_CITRO3D
@@ -65,7 +65,7 @@ RIP_INLINE void hwTiling(const u8* src, u8* dst, size_t width, size_t height, RI
             KYGX_UNREACHABLE("Invalid pixel format!");
     }
 
-    GXDisplayTransferFlags transferFlags;
+    KYGXDisplayTransferFlags transferFlags;
     transferFlags.mode = makeTiled ? KYGX_DISPLAYTRANSFER_MODE_L2T : KYGX_DISPLAYTRANSFER_MODE_T2L;
     transferFlags.srcFmt = fmt;
     transferFlags.dstFmt = fmt;
