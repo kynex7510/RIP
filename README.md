@@ -18,7 +18,13 @@ where `{BACKEND_HERE}` is one of: `kygx`, `libctru`, `citro3d`.
 
 ### Baremetal build (KYGX/libn3ds)
 
-TODO.
+```sh
+cmake -B BuildBM -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="$CTR_BM_TOOLCHAIN_ROOT/Toolchain.cmake" -DCMAKE_BUILD_TYPE=Release -DRIP_BACKEND="{BACKEND_HERE}" -DRIP_ENABLE_TESTS=ON
+cmake --build BuildBM --config Release
+cmake --install BuildBM --prefix BuildBM/Release
+```
+
+where `${BACKEND_HERE}` is one of: `kygx`, `libn3ds`.
 
 ## License
 

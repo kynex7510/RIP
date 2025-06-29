@@ -1,13 +1,20 @@
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 include(CMake/CPM.cmake)
 
-set(CMAKE_C_STANDARD 11)
+# C23, CXX, ASM required for libn3ds.
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-project(rip C ASM)
+project(rip C CXX ASM)
 
-option(RIP_BACKEND "Set backend" "")
+# Setup baremetal.
+if (CTR_BAREMETAL)
+    include(BM/ARM11)
+endif()
+
+option(RIP_BACKEND "Set the backend, must be one of: kygx, libctru, citro3d, libn3ds" "")
 option(RIP_ENABLE_TESTS "Enable tests compilation" OFF)
 
+# Setup library.
 set(RIP_SOURCES
     Source/C3D.c
     Source/Cache.c
@@ -22,17 +29,31 @@ set(RIP_SOURCES
 add_library(rip STATIC ${RIP_SOURCES})
 
 if (RIP_BACKEND STREQUAL "kygx") # KYGX
-    CPMAddPackage("gh:kynex7510/KYGX#9531fa7")
+    CPMAddPackage("gh:kynex7510/KYGX#3f257b9")
     target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_KYGX)
     target_link_libraries(rip PUBLIC kygx)
-elseif (RIP_BACKEND STREQUAL "libctru") # libctru
-    target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_LIBCTRU)
-elseif (RIP_BACKEND STREQUAL "citro3d") # citro3d
-    target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_CITRO3D)
-    target_link_libraries(rip PUBLIC citro3d)
 else()
-    message(FATAL_ERROR "Invalid backend, use one of the following: kygx, libctru, citro3d")
+    if (CTR_BAREMETAL)
+        if (RIP_BACKEND STREQUAL "libn3ds") # libn3ds
+            include(N3DS11)
+            target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_LIBN3DS)
+            target_link_libraries(rip PUBLIC n3ds11)
+        else()
+            message(FATAL_ERROR "Invalid backend, use one of the following: kygx, libn3ds")
+        endif()
+    else()
+        if (RIP_BACKEND STREQUAL "libctru") # libctru
+            target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_LIBCTRU)
+        elseif (RIP_BACKEND STREQUAL "citro3d") # citro3d
+            target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_CITRO3D)
+            target_link_libraries(rip PUBLIC citro3d)
+        else()
+            message(FATAL_ERROR "Invalid backend, use one of the following: kygx, libctru, citro3d")
+        endif()
+    endif()
 endif()
+
+message(STATUS "RIP: Compiling with backend \"${RIP_BACKEND}\"")
 
 target_include_directories(rip PUBLIC Include)
 target_compile_options(rip PRIVATE -Wall -Werror)
