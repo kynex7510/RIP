@@ -18,6 +18,7 @@ rip_swapBytesImpl:
 
     _rip_swapBytes4:
     ldr r3, [r1], #4
+    pld [r1, #32]
     rev r3, r3
     str r3, [r0], #4
     sub r2, #4
@@ -31,6 +32,7 @@ rip_swapBytesImpl:
     _rip_swapBytes3_loop:
     ldrb r4, [r1, #2]
     ldrb r3, [r1], #3
+    pld [r1, #32]
     strb r3, [r0, #2]
     strb r4, [r0], #3
     sub r2, #3
@@ -45,6 +47,7 @@ rip_swapBytesImpl:
     // Optimized version that handles 2 pixels at time.
     _rip_swapBytes2_word:
     ldr r3, [r1], #4
+    pld [r1, #32]
     rev16 r3, r3
     str r3, [r0], #4
     sub r2, #4
