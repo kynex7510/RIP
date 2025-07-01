@@ -5,6 +5,7 @@
 
 static u8 g_TmpBuffer[RIP_MAX_TEX_DIMS * 4];
 
+extern void rip_memcpy(u8* dst, const u8* src, size_t size);
 extern void rip_swapBytesImpl(u8* dst, const u8* src, size_t size, size_t bytesPerPixel);
 
 void ripSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
@@ -24,7 +25,7 @@ void ripSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat 
             const size_t index0 = r * rowSize;
             const size_t index1 = (height - r - 1) * rowSize;
 
-            memcpy(g_TmpBuffer, &src[index0], rowSize);
+            rip_memcpy(g_TmpBuffer, &src[index0], rowSize);
             rip_swapBytesImpl(&dst[index0], &src[index1], rowSize, bytesPerPixel);
             rip_swapBytesImpl(&dst[index1], g_TmpBuffer, rowSize, bytesPerPixel);
         }
