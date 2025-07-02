@@ -6,7 +6,6 @@
 #define _RIP_TEX3DS_H
 
 #include <RIP/Format.h>
-
 #include <stdio.h>
 
 /// @brief Sub-texture object.

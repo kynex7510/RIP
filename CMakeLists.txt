@@ -11,10 +11,10 @@ if (CTR_BAREMETAL)
     include(BM/ARM11)
 endif()
 
+# Setup library.
 option(RIP_BACKEND "Set the backend, must be one of: kygx, libctru, citro3d, libn3ds" "")
 option(RIP_ENABLE_TESTS "Enable tests compilation" OFF)
 
-# Setup library.
 set(RIP_SOURCES
     Source/C3D.c
     Source/Cache.c
@@ -25,6 +25,10 @@ set(RIP_SOURCES
     Source/Tex3DS.c
     Source/Tiling.c
 )
+
+if (CTR_BAREMETAL)
+    set(RIP_SOURCES ${RIP_SOURCES} Source/Decompress/Decompress.c)
+endif()
 
 add_library(rip STATIC ${RIP_SOURCES})
 

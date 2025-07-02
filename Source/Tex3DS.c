@@ -2,27 +2,9 @@
 #include <RIP/Texture.h>
 
 #include "Allocator.h"
+#include "Decompress/Include.h"
 
 #include <string.h> // memcpy, memset
-
-#if RIP_BACKEND == RIP_BACKEND_KYGX
-#ifdef KYGX_BAREMETAL
-#define COMPRESSION_USE_LIBN3DS
-#else
-#define COMPRESSION_USE_LIBCTRU
-#endif // KYGX_BAREMETAL
-#elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND_CITRO3D
-#define COMPRESSION_USE_LIBCTRU
-#elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
-#define COMPRESSION_USE_LIBN3DS
-#endif
-
-#ifdef COMPRESSION_USE_LIBCTRU
-#include <3ds.h>
-#elif COMPRESSION_USE_LIBN3DS
-// TODO
-#error "Not implemented!"
-#endif
 
 #define TEX_TYPE_2D 0
 #define TEX_TYPE_CUBEMAP 1
