@@ -35,7 +35,7 @@ if (RIP_BACKEND STREQUAL "kygx") # KYGX
 else()
     if (CTR_BAREMETAL)
         if (RIP_BACKEND STREQUAL "libn3ds") # libn3ds
-            include(N3DS11)
+            include(BM/N3DS11)
             target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_LIBN3DS)
             target_link_libraries(rip PUBLIC n3ds11)
         else()
