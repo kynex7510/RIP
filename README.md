@@ -30,5 +30,5 @@ where `${BACKEND_HERE}` is one of: `kygx`, `libn3ds`.
 
 This library is doubly licensed:
 
-- MIT, for HOS (userland) usage (see [HOS_LICENSE.txt](HOS_LICENSE.txt)).
+- MPL 2.0, for HOS (userland) usage (see [HOS_LICENSE.txt](HOS_LICENSE.txt)).
 - GPLv3, for baremetal usage (see [BM_LICENSE.txt](BM_LICENSE.txt)).
