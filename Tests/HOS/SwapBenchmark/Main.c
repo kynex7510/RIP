@@ -7,7 +7,7 @@
 #define TICKS_PER_NS (SYSCLOCK_ARM11 / 1000000000.0)
 
 static inline double u64_to_double(u64 value) {
-	return (((double)(u32)(value >> 32))*0x100000000ULL+(u32)value);
+    return (((double)(u32)(value >> 32))*0x100000000ULL+(u32)value);
 }
 
 static void benchmarkSwapBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {

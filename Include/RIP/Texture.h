@@ -58,7 +58,7 @@ RIP_INLINE size_t ripGetNumTextureLevels(u16 width, u16 height) {
  * @return Texture data size.
  */
 RIP_INLINE size_t ripGetTextureDataSize(u16 width, u16 height, RIPPixelFormat pixelFormat, size_t levels) {
-    return ripGetTextureDataOffset(width, height, pixelFormat, ripGetNumTextureLevels(width, height));
+    return ripGetTextureDataOffset(width, height, pixelFormat, levels);
 }
 
 #ifdef __cplusplus

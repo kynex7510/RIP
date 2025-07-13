@@ -180,7 +180,7 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
     
     // Allocate texture data.
     const size_t dataSize = ripGetTextureDataSize(out->width, out->height, out->pixelFormat, out->levels);
-    const size_t allocSize = ripGetTextureDataSize(out->width, out->height, out->pixelFormat, RIP_MAX_TEX_LEVELS);
+    const size_t allocSize = ripGetTextureDataSize(out->width, out->height, out->pixelFormat, ripGetNumTextureLevels(out->width, out->height));
     const size_t numFaces = out->isCubeMap ? 6 : 1;
 
     for (size_t i = 0; i < numFaces; ++i) {
