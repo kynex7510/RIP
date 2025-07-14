@@ -80,9 +80,11 @@ rip_swapBytesImpl:
 
     _rip_swapBytes3_loop:
     ldrb r4, [r1, #2]
-    ldrb r3, [r1], #3
+    ldrh r3, [r1], #3
     pld [r1, #32]
     strb r3, [r0, #2]
+    lsr r3, #8
+    strb r3, [r0, #1]
     strb r4, [r0], #3
     sub r2, #3
     cmp r2, #3

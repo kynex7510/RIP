@@ -1,1 +1,2 @@
 add_subdirectory(SwapBenchmark)
+add_subdirectory(VerifySwap)
