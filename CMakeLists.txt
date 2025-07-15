@@ -33,7 +33,7 @@ endif()
 add_library(rip STATIC ${RIP_SOURCES})
 
 if (RIP_BACKEND STREQUAL "kygx") # KYGX
-    CPMAddPackage("gh:kynex7510/KYGX#1e082b4")
+    CPMAddPackage("gh:kynex7510/KYGX#73dee98")
     target_compile_definitions(rip PUBLIC RIP_BACKEND=RIP_BACKEND_KYGX)
     target_link_libraries(rip PUBLIC kygx)
 else()
