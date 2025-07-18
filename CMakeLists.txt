@@ -20,8 +20,8 @@ set(RIP_SOURCES
     Source/Cache.c
     Source/Convert.c
     Source/Format.c
-    Source/Swap.c
-    Source/SwapImpl.s
+    Source/Pixels.c
+    Source/PixelsImpl.s
     Source/Tex3DS.c
     Source/Tiling.c
 )

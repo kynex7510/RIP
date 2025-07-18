@@ -1,5 +1,5 @@
 #include <3ds.h>
-#include <RIP/Swap.h>
+#include <RIP/Pixels.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -50,7 +50,7 @@ int main() {
     if (!out16Expected)
         svcBreak(USERBREAK_PANIC);
 
-    ripSwapBytes(buffer, out16, 1024, 1024, RIP_PIXELFORMAT_RGBA4, false);
+    ripSwapPixelBytes(buffer, out16, 1024, 1024, RIP_PIXELFORMAT_RGBA4, false);
     flip16(buffer, out16Expected, 1024 * 1024 * 2);
 
     if (memcmp(out16, out16Expected, 1024 * 1024 * 2)) {
@@ -72,7 +72,7 @@ int main() {
     if (!out24Expected)
         svcBreak(USERBREAK_PANIC);
 
-    ripSwapBytes(buffer, out24, 1024, 1024, RIP_PIXELFORMAT_RGB8, false);
+    ripSwapPixelBytes(buffer, out24, 1024, 1024, RIP_PIXELFORMAT_RGB8, false);
     flip24(buffer, out24Expected, 1024 * 1024 * 3);
 
     if (memcmp(out24, out24Expected, 1024 * 1024 * 3)) {
@@ -94,7 +94,7 @@ int main() {
     if (!out32Expected)
         svcBreak(USERBREAK_PANIC);
 
-    ripSwapBytes(buffer, out32, 1024, 1024, RIP_PIXELFORMAT_RGBA8, false);
+    ripSwapPixelBytes(buffer, out32, 1024, 1024, RIP_PIXELFORMAT_RGBA8, false);
     flip32(buffer, out32Expected, 1024 * 1024 * 4);
 
     if (memcmp(out32, out32Expected, 1024 * 1024 * 4)) {

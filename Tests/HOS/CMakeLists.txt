@@ -1,2 +1,4 @@
-add_subdirectory(SwapBenchmark)
-add_subdirectory(VerifySwap)
+add_subdirectory(VerifyPixelSwap)
+add_subdirectory(BenchmarkPixelSwap)
+add_subdirectory(VerifyPixelConvert)
+add_subdirectory(BenchmarkPixelConvert)

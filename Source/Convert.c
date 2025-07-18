@@ -5,7 +5,7 @@
  */
 
 #include <RIP/Convert.h>
-#include <RIP/Swap.h>
+#include <RIP/Pixels.h>
 #include <RIP/Tiling.h>
 
 #include "Allocator.h"
@@ -18,7 +18,7 @@ bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
         void* tmp = ripLinearAlloc(size);
 
         if (tmp) {
-            ripSwapBytes(src, tmp, width, height, pixelFormat, true);
+            ripSwapPixelBytes(src, tmp, width, height, pixelFormat, true);
             if (ripTile(tmp, dst, width, height, pixelFormat))
                 ret = true;
 
@@ -26,7 +26,7 @@ bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
         }
     } else {
         if (ripTile(src, dst, width, height, pixelFormat)) {
-            ripSwapBytes(dst, dst, width, height, pixelFormat, false);
+            ripSwapPixelBytes(dst, dst, width, height, pixelFormat, false);
             ret = true;
         }
     }
@@ -36,7 +36,7 @@ bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
 
 bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
     if (ripUntile(src, dst, width, height, pixelFormat)) {
-        ripSwapBytes(dst, dst, width, height, pixelFormat, flip);
+        ripSwapPixelBytes(dst, dst, width, height, pixelFormat, flip);
         return true;
     }
 
@@ -48,7 +48,7 @@ bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixe
     void* tmp = ripLinearAlloc(size);
 
     if (tmp) {
-        ripSwapBytes(p, tmp, width, height, pixelFormat, flip);
+        ripSwapPixelBytes(p, tmp, width, height, pixelFormat, flip);
         const bool ret = ripTile(tmp, p, width, height, pixelFormat);
         ripLinearFree(tmp);
         return ret;
@@ -64,7 +64,7 @@ bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pi
 
     if (tmp) {
         if (ripUntile(p, tmp, width, height, pixelFormat)) {
-            ripSwapBytes(tmp, p, width, height, pixelFormat, flip);
+            ripSwapPixelBytes(tmp, p, width, height, pixelFormat, flip);
             ret = true;
         }
 

@@ -3,7 +3,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 .global rip_memcpy
-.global rip_swapBytesImpl
+.global rip_swapPixelBytesImpl
+.global rip_RGB8ToRGBA8
+.global rip_RGB565ToRGBA8
+.global rip_RGB5A1ToRGBA8
+.global rip_RGBA4ToRGBA8
 
 .section .text
 
@@ -53,8 +57,8 @@ rip_memcpy:
 
 // R0 = dst, R1 = src, R2 = size, R3 = bytesPerPixel.
 // We assume we have at least one pixel.
-.type rip_swapBytesImpl, %function
-rip_swapBytesImpl:
+.type rip_swapPixelBytesImpl, %function
+rip_swapPixelBytesImpl:
     cmp r3, #4
     beq _rip_swapBytes4
     cmp r3, #3
@@ -111,4 +115,74 @@ rip_swapBytesImpl:
     ldrh r3, [r1]
     revsh r3, r3
     strh r3, [r0]
+    bx lr
+
+// R0 = dst, R1 = src, R2 = numPixels.
+.type rip_RGB8ToRGBA8, %function
+rip_RGB8ToRGBA8:
+    mov r3, #3
+    mul r3, r2
+    add r1, r3
+    lsl r3, r2, #2
+    add r0, r3
+    cmp r2, #4
+    blo _rip_RGB8ToRGBA8_copySingle
+
+    push {r4, r5, r6}
+
+    // RGB RGB RGB RGB = RGBR GBRG BRGB = 0xRRBBGGRR 0xGGRRBBGG 0xBBGGRRBB
+    _rip_RGB8ToRGBA8_copyMulti:
+    ldmdb r1!, {r3, r4, r5}
+    pld [r1, #-32]
+
+    // First pixel.
+    mov r6, r5, lsr #8
+    orr r6, r6, #0xFF000000
+
+    // Second pixel.
+    lsl r5, #16
+    orr r5, r5, r4, lsr #16
+    orr r5, r5, #0xFF000000
+
+    // Third pixel.
+    lsl r4, #8
+    orr r4, r4, r3, lsr #24
+    orr r4, r4, #0xFF000000
+
+    // Fourth pixel.
+    orr r3, r3, #0xFF000000
+
+    stmdb r0!, {r3, r4, r5, r6}
+    subs r2, #4
+    bhi _rip_RGB8ToRGBA8_copyMulti
+    pop {r4, r5, r6}
+
+    _rip_RGB8ToRGBA8_copySingle:
+    cmp r2, #0
+    bxeq lr
+    sub r1, #3
+    sub r0, #4
+    ldr r3, [r1]
+    pld [r1, #-32]
+    orr r3, r3, #0xFF000000
+    str r3, [r0]
+    sub r2, #1
+    b _rip_RGB8ToRGBA8_copySingle
+
+// R0 = dst, R1 = src, R2 = numPixels.
+.type rip_RGB565ToRGBA8, %function
+rip_RGB565ToRGBA8:
+    // ...
+    bx lr
+
+// R0 = dst, R1 = src, R2 = numPixels.
+.type rip_RGB5A1ToRGBA8, %function
+rip_RGB5A1ToRGBA8:
+    // ...
+    bx lr
+
+// R0 = dst, R1 = src, R2 = numPixels.
+.type rip_RGBA4ToRGBA8, %function
+rip_RGBA4ToRGBA8:
+    // ...
     bx lr
