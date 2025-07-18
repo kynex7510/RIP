@@ -16,7 +16,7 @@
 #elif RIP_BACKEND == RIP_BACKEND_CITRO3D
 #include <citro3d.h>
 #elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
-// TODO
+#include <arm11/allocator/fcram.h>
 #endif
 
 #include <stdlib.h> // malloc, free
@@ -43,8 +43,7 @@ RIP_INLINE void* ripLinearAlloc(size_t size) {
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND == RIP_BACKEND_CITRO3D
     return linearAlloc(size);
 #elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
-// TODO
-#error "Unimplemented!"
+    return fcramAlloc(size);
 #endif
 }
 
@@ -54,8 +53,7 @@ RIP_INLINE void ripLinearFree(void* p) {
 #elif RIP_BACKEND == RIP_BACKEND_LIBCTRU || RIP_BACKEND == RIP_BACKEND_CITRO3D
     linearFree(p);
 #elif RIP_BACKEND == RIP_BACKEND_LIBN3DS
-// TODO
-#error "Unimplemented!"
+    fcramFree(p);
 #endif
 }
 
