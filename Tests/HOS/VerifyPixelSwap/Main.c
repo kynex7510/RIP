@@ -50,7 +50,9 @@ int main() {
     if (!out16Expected)
         svcBreak(USERBREAK_PANIC);
 
-    ripSwapPixelBytes(buffer, out16, 1024, 1024, RIP_PIXELFORMAT_RGBA4, false);
+    if (!ripSwapPixelBytes(buffer, out16, 1024, 1024, RIP_PIXELFORMAT_RGBA4, false))
+        svcBreak(USERBREAK_PANIC);
+
     flip16(buffer, out16Expected, 1024 * 1024 * 2);
 
     if (memcmp(out16, out16Expected, 1024 * 1024 * 2)) {
@@ -72,7 +74,9 @@ int main() {
     if (!out24Expected)
         svcBreak(USERBREAK_PANIC);
 
-    ripSwapPixelBytes(buffer, out24, 1024, 1024, RIP_PIXELFORMAT_RGB8, false);
+    if (!ripSwapPixelBytes(buffer, out24, 1024, 1024, RIP_PIXELFORMAT_RGB8, false))
+        svcBreak(USERBREAK_PANIC);
+
     flip24(buffer, out24Expected, 1024 * 1024 * 3);
 
     if (memcmp(out24, out24Expected, 1024 * 1024 * 3)) {
@@ -94,7 +98,9 @@ int main() {
     if (!out32Expected)
         svcBreak(USERBREAK_PANIC);
 
-    ripSwapPixelBytes(buffer, out32, 1024, 1024, RIP_PIXELFORMAT_RGBA8, false);
+    if (!ripSwapPixelBytes(buffer, out32, 1024, 1024, RIP_PIXELFORMAT_RGBA8, false))
+        svcBreak(USERBREAK_PANIC);
+
     flip32(buffer, out32Expected, 1024 * 1024 * 4);
 
     if (memcmp(out32, out32Expected, 1024 * 1024 * 4)) {

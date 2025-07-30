@@ -49,6 +49,9 @@ RIP_INLINE void swTiling(const u8* src, u8* dst, size_t width, size_t height, si
 
 RIP_INLINE void hwTiling(const u8* src, u8* dst, size_t width, size_t height, RIPPixelFormat pixelFormat, bool makeTiled) {
 #if RIP_BACKEND == RIP_BACKEND_KYGX // KYGX
+    KYGX_ASSERT(src);
+    KYGX_ASSERT(dst);
+
     u32 fmt;
 
     switch (pixelFormat) {
@@ -164,7 +167,7 @@ RIP_INLINE bool canUseHW(u16 width, u16 height, RIPPixelFormat pixelFormat) {
 }
 
 static bool tilingImpl(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool makeTiled) {
-    if (width < 8 || height < 8 || (width & 7) || (height & 7))
+    if (!src || !dst || width < 8 || height < 8 || (width & 7) || (height & 7))
         return false;
 
     // Use the hardware if possible.

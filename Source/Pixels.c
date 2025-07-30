@@ -21,12 +21,12 @@ extern void rip_RGB565ToRGBA8(u8* dst, const u8* src, size_t numPixels);
 extern void rip_RGB5A1ToRGBA8(u8* dst, const u8* src, size_t numPixels);
 extern void rip_RGBA4ToRGBA8(u8* dst, const u8* src, size_t numPixels);
 
-void ripSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
-    RIP_ASSERT(width <= RIP_MAX_TEX_DIMS);
-    RIP_ASSERT(height <= RIP_MAX_TEX_DIMS);
+bool ripSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
+    if (!src || !dst || width > RIP_MAX_TEX_DIMS || height > RIP_MAX_TEX_DIMS)
+        return false;
 
     if (!width || !height)
-        return;
+        return true;
 
     const size_t bytesPerPixel = ripGetPixelFormatBPP(pixelFormat) >> 3;
     RIP_ASSERT(bytesPerPixel > 0);
@@ -49,6 +49,9 @@ void ripSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFo
 }
 
 static inline bool convertPixelsToRGBA8(const u8* src, u8* dst, size_t numPixels, RIPPixelFormat srcPixelFormat) {
+    if (!src || !dst)
+        return false;
+
     switch (srcPixelFormat) {
         case RIP_PIXELFORMAT_RGBA8:
             if (src != dst)
@@ -72,6 +75,9 @@ static inline bool convertPixelsToRGBA8(const u8* src, u8* dst, size_t numPixels
 }
 
 bool ripConvertPixels(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat srcPixelFormat, RIPPixelFormat dstPixelFormat) {
+    if (!src || !dst)
+        return false;
+    
     if (!width || !height)
         return true;
 

@@ -13,21 +13,20 @@
 bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
     bool ret = false;
 
-    if (flip) {
-        const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
-        void* tmp = ripLinearAlloc(size);
+    if (src && dst) {
+        if (flip) {
+            const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
+            void* tmp = ripLinearAlloc(size);
+            RIP_ASSERT(tmp);
 
-        if (tmp) {
-            ripSwapPixelBytes(src, tmp, width, height, pixelFormat, true);
-            if (ripTile(tmp, dst, width, height, pixelFormat))
-                ret = true;
+            if (ripSwapPixelBytes(src, tmp, width, height, pixelFormat, true))
+                ret = ripTile(tmp, dst, width, height, pixelFormat);
 
             ripLinearFree(tmp);
-        }
-    } else {
-        if (ripTile(src, dst, width, height, pixelFormat)) {
-            ripSwapPixelBytes(dst, dst, width, height, pixelFormat, false);
-            ret = true;
+        } else {
+            if (ripTile(src, dst, width, height, pixelFormat)) {
+                ret = ripSwapPixelBytes(dst, dst, width, height, pixelFormat, false);
+            }
         }
     }
 
@@ -35,38 +34,43 @@ bool ripConvertToNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelF
 }
 
 bool ripConvertFromNative(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
-    if (ripUntile(src, dst, width, height, pixelFormat)) {
-        ripSwapPixelBytes(dst, dst, width, height, pixelFormat, flip);
-        return true;
+    bool ret = false;
+
+    if (src && dst) {
+        if (ripUntile(src, dst, width, height, pixelFormat))
+            ret = ripSwapPixelBytes(dst, dst, width, height, pixelFormat, flip);
     }
 
-    return false;
+    return ret;
 }
 
 bool ripConvertInPlaceToNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
-    const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
-    void* tmp = ripLinearAlloc(size);
+    bool ret = false;
 
-    if (tmp) {
-        ripSwapPixelBytes(p, tmp, width, height, pixelFormat, flip);
-        const bool ret = ripTile(tmp, p, width, height, pixelFormat);
+    if (p) {
+        const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
+        void* tmp = ripLinearAlloc(size);
+        RIP_ASSERT(tmp);
+
+        if (ripSwapPixelBytes(p, tmp, width, height, pixelFormat, flip))
+            ret = ripTile(tmp, p, width, height, pixelFormat);
+            
         ripLinearFree(tmp);
-        return ret;
     }
 
-    return false;
+    return ret;
 }
 
 bool ripConvertInPlaceFromNative(u8* p, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip) {
     bool ret = false;
-    const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
-    void* tmp = ripLinearAlloc(size);
 
-    if (tmp) {
-        if (ripUntile(p, tmp, width, height, pixelFormat)) {
-            ripSwapPixelBytes(tmp, p, width, height, pixelFormat, flip);
-            ret = true;
-        }
+    if (p) {    
+        const size_t size = (width * height * ripGetPixelFormatBPP(pixelFormat)) >> 3;
+        void* tmp = ripLinearAlloc(size);
+        RIP_ASSERT(tmp);
+
+        if (ripUntile(p, tmp, width, height, pixelFormat))
+            ret = ripSwapPixelBytes(tmp, p, width, height, pixelFormat, flip);
 
         ripLinearFree(tmp);
     }

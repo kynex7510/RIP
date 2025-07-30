@@ -46,26 +46,34 @@ static RIPPixelFormat cvtPF(GPU_TEXCOLOR fmt) {
 }
 
 bool ripConvertAndLoadC3DTexImage(C3D_Tex* tex, const void* data, GPU_TEXFACE face, int level) {
-    const RIPPixelFormat pixelFormat = cvtPF(tex->fmt);
-    void* tmp = linearAlloc((tex->width * tex->height * ripGetPixelFormatBPP(pixelFormat)) >> 3);
-    if (!tmp)
-        return NULL;
-
     bool ret = false;
-    if (ripConvertToNative(data, tmp, tex->width, tex->height, pixelFormat, false)) {
-        C3D_TexLoadImage(tex, tmp, face, level);
-        ret = true;
+
+    if (tex && data) {
+        const RIPPixelFormat pixelFormat = cvtPF(tex->fmt);
+        void* tmp = linearAlloc((tex->width * tex->height * ripGetPixelFormatBPP(pixelFormat)) >> 3);
+#ifndef NDEBUG
+        if (!tmp)
+            svcBreak(USERBREAK_PANIC);
+#endif // !NDEBUG
+
+        if (ripConvertToNative(data, tmp, tex->width, tex->height, pixelFormat, false)) {
+            C3D_TexLoadImage(tex, tmp, face, level);
+            ret = true;
+        }
+
+        linearFree(tmp);
     }
 
-    linearFree(tmp);
     return ret;
 }
 
 bool ripConvertInPlaceAndLoadC3DTexImage(C3D_Tex* tex, void* data, GPU_TEXFACE face, int level) {
-    const RIPPixelFormat pixelFormat = cvtPF(tex->fmt);
-    if (ripConvertInPlaceToNative(data, tex->width, tex->height, pixelFormat, false)) {
-        C3D_TexLoadImage(tex, data, face, level);
-        return true;
+    if (tex && data) {
+        const RIPPixelFormat pixelFormat = cvtPF(tex->fmt);
+        if (ripConvertInPlaceToNative(data, tex->width, tex->height, pixelFormat, false)) {
+            C3D_TexLoadImage(tex, data, face, level);
+            return true;
+        }
     }
 
     return false;

@@ -97,7 +97,7 @@ RIP_INLINE RIPPixelFormat wrapPixelFormat(u8 rawFormat) {
             return RIP_PIXELFORMAT_ETC1A4;
     }
 
-    RIP_ASSERT(false);
+    RIP_ASSERT(false && "Invalid pixel format!");
     return -1;
 }
 
@@ -151,16 +151,19 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
     // Parse header.
     RawHeader header;
     stream->read(stream, &header, sizeof(RawHeader));
-    RIP_ASSERT(header.type == TEX_TYPE_2D || header.type == TEX_TYPE_CUBEMAP);
+    if (header.type != TEX_TYPE_2D && header.type != TEX_TYPE_CUBEMAP)
+        return false;
 
     memset(out->faces, 0, 6 * sizeof(u8*));
     out->isCubeMap = header.type == TEX_TYPE_CUBEMAP;
 
     out->width = (1 << (header.widthLog2 + 3));
-    RIP_ASSERT(out->width >= 8);
+    if (out->width < 8)
+        return false;
 
     out->height = (1 << (header.heightLog2 + 3));
-    RIP_ASSERT(out->height >= 8);
+    if (out->height < 8)
+        return false;
 
     out->pixelFormat = wrapPixelFormat(header.format);
     out->levels = header.mipmapLevels + 1; // Add one for base level.
@@ -169,7 +172,9 @@ static bool loadTextureImpl(TexStream* stream, RIPTexture* out) {
         out->numOfSubTextures = header.numSubTextures;
     } else {
         // It doesn't make sense for a cubemap to have sub-textures.
-        RIP_ASSERT(header.numSubTextures == 0);
+        if (header.numSubTextures)
+            return false;
+
         out->numOfSubTextures = 0; 
     }
 

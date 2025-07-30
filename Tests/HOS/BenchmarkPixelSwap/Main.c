@@ -21,8 +21,11 @@ static void benchmarkSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 heigh
         svcBreak(USERBREAK_PANIC);
 
     const u64 start = svcGetSystemTick();
-    ripSwapPixelBytes(src, dst, width, height, pixelFormat, flip);
+    const bool ret = ripSwapPixelBytes(src, dst, width, height, pixelFormat, flip);
     const u64 end = svcGetSystemTick();
+
+    if (!ret)
+        svcBreak(USERBREAK_PANIC);
 
     if (R_FAILED(svcFlushProcessDataCache(CUR_PROCESS_HANDLE, 1, 0x7000000)))
         svcBreak(USERBREAK_PANIC);

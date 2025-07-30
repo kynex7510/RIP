@@ -18,23 +18,25 @@ extern "C" {
 /**
  * @brief Swap image pixels bytes. Both buffers can start at the same address (in-place operation).
  * @param[in] src Source address.
- * @param[in] dst Destination address.
+ * @param[out] dst Destination address.
  * @param[in] width Image width.
  * @param[in] height Image height.
  * @param[in] pixelFormat Image pixel format.
  * @param[in] flip Whether to flip the image vertically.
+ * @result True if swapping completed successfully, false otherwise.
  * @note The buffers must not be in VRAM.
  */
-void ripSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
+bool ripSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat pixelFormat, bool flip);
 
 /**
  * @brief Convert pixel bytes. Both buffers can start at the same address (in-place operation).
  * @param[in] src Source address.
- * @param[in] dst Destination address.
+ * @param[out] dst Destination address.
  * @param[in] width Image width.
  * @param[in] height Image height.
  * @param[in] srcPixelFormat Source pixel format, must be one of: RGBA8, RGB8, RGB565, RGB5A1, RGBA4.
  * @param[in] dstPixelFormat Destination pixel format, must be one of: RGBA8.
+ * @result True if the conversion completed successfully, false otherwise.
  * @note The buffers must not be in VRAM.
  */
 bool ripConvertPixels(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFormat srcPixelFormat, RIPPixelFormat dstPixelFormat);
