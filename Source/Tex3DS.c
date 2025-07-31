@@ -217,7 +217,7 @@ static bool loadTex3DSImpl(Tex3DSStream* stream, RIPTex3DS* out) {
     for (size_t i = 0; i < numFaces; ++i) {
         out->faces[i] = ripLinearAlloc(allocSize);
         if (!out->faces[i]) {
-            ripDestroyTexture(out);
+            ripDestroyTex3DS(out);
             return false;
         }
     }

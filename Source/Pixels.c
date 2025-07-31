@@ -46,6 +46,8 @@ bool ripSwapPixelBytes(const u8* src, u8* dst, u16 width, u16 height, RIPPixelFo
         const size_t size = width * height * bytesPerPixel;
         rip_swapPixelBytesImpl(dst, src, size, bytesPerPixel);
     }
+
+    return true;
 }
 
 static inline bool convertPixelsToRGBA8(const u8* src, u8* dst, size_t numPixels, RIPPixelFormat srcPixelFormat) {
