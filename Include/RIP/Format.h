@@ -94,6 +94,15 @@ RIP_INLINE size_t ripGetFormatTypeBPP(RIPFormat format, RIPType type) {
     return 0;
 }
 
+/**
+ * @brief Check if the given pixel format refers to a compressed one.
+ * @param[in] pixelFormat Pixel format.
+ * @return True if the pixel format refers to a compressed one, false otherwise.
+ */
+RIP_INLINE bool ripIsPixelFormatCompressed(RIPPixelFormat pixelFormat) {
+    return pixelFormat == RIP_PIXELFORMAT_ETC1 || pixelFormat == RIP_PIXELFORMAT_ETC1A4;
+}
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
