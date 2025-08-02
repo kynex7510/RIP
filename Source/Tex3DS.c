@@ -205,9 +205,13 @@ static bool loadTex3DSImpl(Tex3DSStream* stream, RIPTex3DS* out) {
     }
 
     // Allocate subtex info structures.
-    out->subTextures = ripHeapAlloc(sizeof(RIPSubTex3DS) * out->numOfSubTextures);
-    if (!out->subTextures)
-        return false;
+    if (out->numOfSubTextures) {
+        out->subTextures = ripHeapAlloc(sizeof(RIPSubTex3DS) * out->numOfSubTextures);
+        if (!out->subTextures)
+            return false;
+    } else {
+        out->subTextures = NULL;
+    }
     
     // Allocate texture data.
     const size_t dataSize = ripGetTextureDataSize(out->width, out->height, out->pixelFormat, out->levels);
