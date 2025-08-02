@@ -248,13 +248,38 @@ static bool loadTex3DSImpl(Tex3DSStream* stream, RIPTex3DS* out) {
     return true;
 }
 
+static inline void moveTex3DS(RIPTex3DS* from, RIPTex3DS* to) {
+    ripDestroyTex3DS(to);
+
+    const size_t numFaces = from->isCubeMap ? 6 : 1;
+    for (size_t i = 0; i < numFaces; ++i)
+        to->faces[i] = from->faces[i];
+
+    to->isCubeMap = from->isCubeMap;
+    to->width = from->width;
+    to->height = from->height;
+    to->pixelFormat = from->pixelFormat;
+    to->levels = from->levels;
+    to->numOfSubTextures = from->numOfSubTextures;
+    to->subTextures = from->subTextures;
+
+    memset(from, 0, sizeof(RIPTex3DS));
+}
+
 bool ripLoadTex3DS(const u8* data, size_t size, RIPTex3DS* out) {
     if (!data || !out)
         return false;
 
     Tex3DSStream stream;
     getMemTex3DSStream(&stream, data, size);
-    return loadTex3DSImpl(&stream, out);
+
+    RIPTex3DS tmp;
+    if (loadTex3DSImpl(&stream, &tmp)) {
+        moveTex3DS(&tmp, out);
+        return true;
+    }
+
+    return false;
 }
 
 bool ripLoadTex3DSFromFile(FILE* f, RIPTex3DS* out) {
@@ -263,7 +288,14 @@ bool ripLoadTex3DSFromFile(FILE* f, RIPTex3DS* out) {
 
     Tex3DSStream stream;
     getFileTex3DSStream(&stream, f);
-    return loadTex3DSImpl(&stream, out);
+
+    RIPTex3DS tmp;
+    if (loadTex3DSImpl(&stream, &tmp)) {
+        moveTex3DS(&tmp, out);
+        return true;
+    }
+
+    return false;
 }
 
 bool ripLoadTex3DSFromPath(const char* path, RIPTex3DS* out) {
@@ -288,6 +320,7 @@ void ripDestroyTex3DS(RIPTex3DS* tex3ds) {
         ripLinearFree(tex3ds->faces[i]);
 
     ripHeapFree(tex3ds->subTextures);
+    memset(tex3ds, 0, sizeof(RIPTex3DS));
 }
 
 size_t ripGetTex3DSSize(const RIPTex3DS* tex3ds, size_t level) {
