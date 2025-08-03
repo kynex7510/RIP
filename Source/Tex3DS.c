@@ -224,7 +224,15 @@ static bool loadTex3DSImpl(Tex3DSStream* stream, RIPTex3DS* out) {
             ripDestroyTex3DS(out);
             return false;
         }
+
+        if (i > 0 && !ripValidateTextureFaceAddr(out->faces[0], out->faces[i])) {
+            ripDestroyTex3DS(out);
+            return false;
+        }
     }
+
+    if (numFaces > 1)
+        ripSortTextureFaces(out->faces);
 
     // Load sub-texture info.
     for (size_t i = 0; i < out->numOfSubTextures; ++i) {

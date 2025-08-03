@@ -23,6 +23,7 @@ set(RIP_SOURCES
     Source/Pixels.c
     Source/PixelsImpl.s
     Source/Tex3DS.c
+    Source/Texture.c
     Source/Tiling.c
 )
 

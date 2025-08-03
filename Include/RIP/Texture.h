@@ -61,6 +61,24 @@ RIP_INLINE size_t ripGetTextureDataSize(u16 width, u16 height, RIPPixelFormat pi
     return ripGetTextureDataOffset(width, height, pixelFormat, levels);
 }
 
+/**
+ * @brief Validate texture face addresses.
+ * The PICA200 requires texunit face addresses to not be more than 4MB away from the main address.
+ * @param[in] face0 Face 0 address (main address).
+ * @param[in] otherFace Other face address.
+ * @return True if the address is valid, false otherwise.
+ */
+RIP_INLINE bool ripValidateTextureFaceAddr(const u8* face0, const u8* otherFace) {
+    return ((u32)face0 >> 25) == ((u32)otherFace >> 25);
+}
+
+/**
+ * @brief Sort texture faces.
+ * The PICA200 requires texunit faces to be sorted from lowest to highest address.
+ * @param[in, out] faces Array of face data pointers.
+ */
+void ripSortTextureFaces(u8** faces);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
